@@ -13,12 +13,18 @@ function fail(message: string): never {
 }
 
 async function call(method: string, path: string, body?: unknown): Promise<any> {
+  if (method === 'DELETE') fail('plane.ts does not send DELETE requests. Ask the person to delete it in Plane.');
   const url = `${PLANE_BASE_URL!.replace(/\/$/, '')}/api/v1` + (path.startsWith('/') ? path : '/' + path).replace('{ws}', WS!);
   const response = await fetch(url, {
     method,
     headers: { 'X-API-Key': TOKEN!, 'Content-Type': 'application/json' },
     body: body === undefined ? undefined : JSON.stringify(body),
+    // fetch keeps X-API-Key on a redirect, even to another host, so never follow one
+    redirect: 'manual',
   });
+  if (response.status >= 300 && response.status < 400) {
+    fail(`${method} ${url} -> ${response.status} redirect to ${response.headers.get('location')}. Not followed, so the token stays with Plane. Check PLANE_BASE_URL and that the path ends with "/".`);
+  }
   const text = await response.text();
   if (!response.ok) fail(`${method} ${url} -> ${response.status}\n${text.slice(0, 2000)}`);
   return text ? JSON.parse(text) : null;
@@ -71,6 +77,10 @@ async function issues(identifier: string, moduleName?: string) {
 const [command, ...args] = process.argv.slice(2);
 const missing = ['PLANE_BASE_URL', 'PLANE_WORKSPACE', 'PLANE_TOKEN_FOR_AI'].filter((name) => !process.env[name]);
 if (missing.length) fail(`Set ${missing.join(', ')} before running plane.ts.`);
+const baseUrl = URL.canParse(PLANE_BASE_URL!) ? new URL(PLANE_BASE_URL!) : fail('PLANE_BASE_URL is not a URL.');
+if (baseUrl.protocol !== 'https:' && !['localhost', '127.0.0.1', '[::1]'].includes(baseUrl.hostname)) {
+  fail('PLANE_BASE_URL must start with https://, or the token would be sent unencrypted.');
+}
 if (command === 'api') {
   const [method, path, body] = args;
   if (!method || !path) fail('usage: plane.ts api <METHOD> <path> [json-body]');
