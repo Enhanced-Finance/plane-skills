@@ -1,0 +1,10 @@
+{
+  "name": "plane",
+  "version": "0.2.0",
+  "description": "Agent skill for reading and updating a Plane project board through the Plane REST API.",
+  "author": {
+    "name": "cwkang1998",
+    "url": "https://github.com/cwkang1998"
+  },
+  "repository": "https://github.com/Enhanced-Finance/plane-skills"
+}
