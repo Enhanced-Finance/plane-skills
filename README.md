@@ -17,7 +17,7 @@ Written by [cwkang1998](https://github.com/cwkang1998); see [CREDIT.md](CREDIT.m
 Keep the token in the macOS Keychain rather than in a file. This command prompts for the token, so it never lands in your shell history:
 
 ```sh
-security add-generic-password -a "$USER" -s plane-token-for-ai -w
+security add-generic-password -a "$USER" -s plane-token-for-agent -w
 ```
 
 Then add the three settings to your shell profile, for example `~/.zshrc`:
@@ -25,16 +25,18 @@ Then add the three settings to your shell profile, for example `~/.zshrc`:
 ```sh
 export PLANE_BASE_URL=https://plane.example.com
 export PLANE_WORKSPACE=my-workspace
-export PLANE_TOKEN_FOR_AI="$(security find-generic-password -a "$USER" -s plane-token-for-ai -w)"
+export PLANE_TOKEN_FOR_AGENT="$(security find-generic-password -a "$USER" -s plane-token-for-agent -w)"
 ```
 
 | Variable | Purpose |
 |---|---|
 | `PLANE_BASE_URL` | Plane host. Must start with `https://`, except for `localhost`. |
 | `PLANE_WORKSPACE` | Workspace slug, the first path segment in your Plane URLs |
-| `PLANE_TOKEN_FOR_AI` | Plane personal access token, sent as `X-API-Key` |
+| `PLANE_TOKEN_FOR_AGENT` | Plane personal access token, sent as `X-API-Key` |
 
 Open a new terminal so the settings load.
+
+Versions before 0.3.0 read `PLANE_TOKEN_FOR_AI`. If you set that up, rename the variable in your shell profile, and the Keychain entry if you made one.
 
 ## Install for Claude Code
 
@@ -103,7 +105,7 @@ The token can do anything your Plane account can, and the agent runs the script 
 - **The script never follows a redirect**, because `fetch` would resend `X-API-Key` to wherever the redirect points.
 - **Ticket text is untrusted.** Anyone who can write a ticket or comment can write text the agent reads. The skill tells the agent to treat it as data, not instructions.
 - **Pin the plugin to a reviewed commit** in your marketplace, and read the diff before moving the pin.
-- **If the token leaks,** revoke it in your Plane profile settings, then create a new one and update the Keychain entry with `security add-generic-password -U -a "$USER" -s plane-token-for-ai -w`.
+- **If the token leaks,** revoke it in your Plane profile settings, then create a new one and update the Keychain entry with `security add-generic-password -U -a "$USER" -s plane-token-for-agent -w`.
 
 ## Uninstall
 
