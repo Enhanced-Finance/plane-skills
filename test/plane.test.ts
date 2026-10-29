@@ -9,7 +9,7 @@ import { test } from 'node:test';
 const script = new URL('../skills/plane/scripts/plane.ts', import.meta.url).pathname;
 
 function run(baseUrl: string, ...args: string[]): Promise<{ code: number; stderr: string }> {
-  const env = { PATH: process.env.PATH, PLANE_BASE_URL: baseUrl, PLANE_WORKSPACE: 'ws', PLANE_TOKEN_FOR_AI: 'test-token' };
+  const env = { PATH: process.env.PATH, PLANE_BASE_URL: baseUrl, PLANE_WORKSPACE: 'ws', PLANE_TOKEN_FOR_AGENT: 'test-token' };
   return new Promise((resolve) => {
     execFile(process.execPath, [script, ...args], { env }, (error, _stdout, stderr) => {
       resolve({ code: error ? Number(error.code) : 0, stderr });

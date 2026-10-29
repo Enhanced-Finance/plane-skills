@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-const { PLANE_BASE_URL, PLANE_WORKSPACE: WS, PLANE_TOKEN_FOR_AI: TOKEN } = process.env;
+const { PLANE_BASE_URL, PLANE_WORKSPACE: WS, PLANE_TOKEN_FOR_AGENT: TOKEN } = process.env;
 
 type Page<T> = { results: T[]; next_page_results?: boolean; next_cursor?: string };
 type Issue = {
@@ -75,7 +75,7 @@ async function issues(identifier: string, moduleName?: string) {
 }
 
 const [command, ...args] = process.argv.slice(2);
-const missing = ['PLANE_BASE_URL', 'PLANE_WORKSPACE', 'PLANE_TOKEN_FOR_AI'].filter((name) => !process.env[name]);
+const missing = ['PLANE_BASE_URL', 'PLANE_WORKSPACE', 'PLANE_TOKEN_FOR_AGENT'].filter((name) => !process.env[name]);
 if (missing.length) fail(`Set ${missing.join(', ')} before running plane.ts.`);
 const baseUrl = URL.canParse(PLANE_BASE_URL!) ? new URL(PLANE_BASE_URL!) : fail('PLANE_BASE_URL is not a URL.');
 if (baseUrl.protocol !== 'https:' && !['localhost', '127.0.0.1', '[::1]'].includes(baseUrl.hostname)) {
