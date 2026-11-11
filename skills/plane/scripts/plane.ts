@@ -37,6 +37,7 @@ async function all<T>(path: string): Promise<T[]> {
     const sep = path.includes('?') ? '&' : '?';
     const page: Page<T> | T[] = await call('GET', `${path}${sep}per_page=100${cursor ? `&cursor=${cursor}` : ''}`);
     if (Array.isArray(page)) return page;
+    if (!Array.isArray(page?.results)) fail(`GET ${path} does not return a list. Run it without --all.`);
     out.push(...page.results);
     cursor = page.next_page_results ? page.next_cursor : undefined;
   } while (cursor);
@@ -80,6 +81,10 @@ if (missing.length) fail(`Set ${missing.join(', ')} before running plane.ts.`);
 const baseUrl = URL.canParse(PLANE_BASE_URL!) ? new URL(PLANE_BASE_URL!) : fail('PLANE_BASE_URL is not a URL.');
 if (baseUrl.protocol !== 'https:' && !['localhost', '127.0.0.1', '[::1]'].includes(baseUrl.hostname)) {
   fail('PLANE_BASE_URL must start with https://, or the token would be sent unencrypted.');
+}
+// fetch rejects any other character in a header, and Bun's error for that prints the header value
+if (!/^[\x21-\x7e]+$/.test(TOKEN!)) {
+  fail('PLANE_TOKEN_FOR_AGENT contains a space, a line break or a non-ASCII character. Copy the token again.');
 }
 if (command === 'api') {
   const [method, path, body] = args;

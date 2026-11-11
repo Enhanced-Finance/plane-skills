@@ -2,7 +2,7 @@
 
 An agent skill that reads and updates a [Plane](https://plane.so) board through the Plane REST API. With it, an agent lists tickets, syncs ticket states and dates with shipped git work, and proposes new tickets for you to confirm.
 
-The skill lives in `skills/plane/`. `SKILL.md` holds the instructions, and `scripts/plane.ts` is the command-line tool the agent runs with Bun or Node.
+The skill lives in `skills/plane/`. `SKILL.md` holds the instructions, `scripts/plane.ts` is the command-line tool the agent runs with Bun or Node, and `templates/` holds the Markdown templates the agent fills in for bug reports (`bug-report.md`), features (`feature.md`), feedback or requests (`feedback.md`), and research (`research.md`).
 
 Written by [cwkang1998](https://github.com/cwkang1998); see [CREDIT.md](CREDIT.md).
 
@@ -62,7 +62,7 @@ The repository is also an omp plugin. omp keeps user plugins in `~/.omp/plugins/
 	omp plugin install github:Enhanced-Finance/plane-skills
 	```
 
-	omp runs `bun install` in `~/.omp/plugins/` and records the source in `~/.omp/plugins/package.json`. Add `#<tag>` or `#<branch>` to pin a ref, for example `github:Enhanced-Finance/plane-skills#v0.2.0`. For a private repository, set up SSH or a git credential helper first. Do not put a token in the URL.
+	omp runs `bun install` in `~/.omp/plugins/` and records the source in `~/.omp/plugins/package.json`. Add `#<tag>` or `#<branch>` to pin a ref. For a private repository, set up SSH or a git credential helper first. Do not put a token in the URL.
 
 2. Start a new omp session. Sessions that are already running keep the skill list they started with.
 
