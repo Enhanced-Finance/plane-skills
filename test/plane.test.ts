@@ -41,6 +41,15 @@ test('refuses a base URL that is not a URL', async () => {
   assert.match(result.stderr, /not a URL/);
 });
 
+test('refuses a token that fetch would reject, without printing it', async () => {
+  const env = { PATH: process.env.PATH, PLANE_BASE_URL: 'https://plane.invalid', PLANE_WORKSPACE: 'ws', PLANE_TOKEN_FOR_AGENT: 'canary-one\ncanary-two' };
+  const { promise, resolve } = Promise.withResolvers<string>();
+  execFile(process.execPath, [script, 'api', 'GET', '/users/me/'], { env }, (_error, stdout, stderr) => resolve(stdout + stderr));
+  const output = await promise;
+  assert.match(output, /PLANE_TOKEN_FOR_AGENT contains/);
+  assert.doesNotMatch(output, /canary/);
+});
+
 test('does not follow a redirect, so the token never reaches the other host', async () => {
   const received: IncomingHttpHeaders[] = [];
   const elsewhere = createServer((request, response) => {
